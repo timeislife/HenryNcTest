@@ -1,11 +1,11 @@
 # HenryNcTest
-node js chat room test with socket.io
+node js web site test.
 
 to start the program:
 1. cd to local repository folder. 
-2. run "node index"
+2. run "node app.js"
 3. visit http://localhost:3000
-   then you can test the chat room. 
+   then you can test the web site. 
 
 
 to update npm modules used in this app, run the following command and change the version numbers:
