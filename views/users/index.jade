@@ -1,0 +1,6 @@
+.page
+  h2 Users
+
+for message in flash
+  a.alert(class='alert-' + message.type)
+    p= message.message

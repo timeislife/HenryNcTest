@@ -1,21 +1,115 @@
 var express = require('express'),
-    app = module.exports = express();
+    app = module.exports = express(),
+	jade = require('jade'),
+	models = require('./models'),
+	mongoose = require('mongoose'),
+	User,
+	flash  = require('flash'),
+	cookieParser = require('cookie-parser'),
+	session      = require('express-session'),
+	fs = require('fs'),
+	db,
+	morgan = require('morgan'),
+	CircularJSON = require('circular-json'),
+	bodyParser = require('body-parser'),
 	http = require('http').Server(app);
+
+var path = require('path');
+
+app.use(cookieParser());
+app.use(session({ secret: '123' }));
+app.use(flash());
+
+// parse urlencoded request bodies into req.body 
+app.use(bodyParser.urlencoded());
+
+// create a write stream (in append mode)
+var accessLogStream = fs.createWriteStream(__dirname + '/mainlog.log', {flags: 'a'})
+// setup the logger
+app.use(morgan('combined', {stream: accessLogStream}))
+
+app.set('views', __dirname + '/views');
+app.set('db-uri', 'mongodb://localhost/henrynctest-production');
+
+
+models.defineModels(mongoose, function() {
+  app.User = User = mongoose.model('User');
+  db = mongoose.connect(app.set('db-uri'));
+})
 
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/app.html');
 });
 
-app.get('/public/styles/app.css', function(req, res){
-  res.sendFile(__dirname + '/public/styles/app.css');
-});
-
+app.use("/public", express.static( path.join(__dirname, '/public')));
 
 app.get('/chat', function(req, res) {
   res.sendFile(__dirname + '/index.html');
 });
 
+app.get('/users/new', function(req, res) {
+  res.render('users/new.jade', {
+     user: new User()
+  });
+});
+
+app.post('/users.:format?', function(req, res) {
+  var user = new User(req.body.user);
+
+  //WriteLogToFile( fs, null, JSON.stringify(user) );
+
+  function userSaveFailed() {
+    req.flash('error', 'Account creation failed');
+    res.render('users/new.jade', {
+      user: user 
+    });
+  }
+   
+  user.save(function(err) {
+    if (err) return userSaveFailed();
+
+    req.flash('info', 'Your account has been created');
+    switch (req.params.format) {
+      case 'json':
+        res.send(user.toObject());
+      break;
+
+      default:
+        req.session.user_id = user.id;
+        res.redirect('/');
+    }
+
+  });
+
+});
 
 http.listen(3000, function(){
   console.log('listening on *:3000');
 });
+
+
+/*
+//Parameters:
+//fs, node.js fs object.
+//filepath, filepath of the file. if null, use __dirname + '/debug.log' dy default.
+//obj: the str to be write into the file, if is object, use JSON.stringify(or CircularJSON.stringify(obj) for DOM) to convert it to string.
+Usage:
+	fs = require('fs'),
+	filepath = __dirname + '/debug.log';
+    WriteLogToFile( fs, filepath, JSON.stringify(obj) );
+*/
+var WriteLogToFile = function(fs, filepath , str)
+{
+	if( !filepath )
+	{
+		filepath = __dirname + '/debug.log';
+	}
+
+	fs.writeFile(filepath, str, function(err) {
+		if(err) {
+			console.log(err);
+		} else {
+			console.log("The file was saved!");
+		}
+	});
+}
