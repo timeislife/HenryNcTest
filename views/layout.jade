@@ -1,0 +1,31 @@
+doctype html
+html
+  head
+    title= 'Nodepad'
+    link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css')
+    link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css')
+    script(type='text/javascript', src='ttps://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js')
+    link(rel='stylesheet', href='/public/styles/app.css')
+body
+    div.container
+      div.row 
+        div.col-md-4 icon here
+        div.col-md-8 
+          if !session || !session.email
+            include users/login
+          else
+            p #{session.email}
+      div.row
+        div.col-md-12
+          ul.nav.nav-pills
+            li.active(role="presentation")
+              a home
+            li.active(role="presentation")
+              a(href="/chat") Chat room
+            li.active(role="presentation")
+              a Messages
+          div.pull-right user tool
+       div.row
+        div.col-md-9 
+          block content
+        div.col-md-3 right ad

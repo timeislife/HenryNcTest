@@ -37,8 +37,16 @@ models.defineModels(mongoose, function() {
   db = mongoose.connect(app.set('db-uri'));
 })
 
+app.use(function(req,res,next){
+    res.locals.session = req.session;
+    next();
+});
+
 app.get('/', function(req, res){
-  res.sendFile(__dirname + '/app.html');
+  //res.sendFile(__dirname + '/app.html');
+   console.log( JSON.stringify( session ) );
+    res.render('index.jade', {
+  });
 });
 
 app.use("/public", express.static( path.join(__dirname, '/public')));
@@ -76,7 +84,11 @@ app.post('/users.:format?', function(req, res) {
 
       default:
         req.session.user_id = user.id;
-        res.redirect('/');
+	    req.session.email = user.email;
+		res.render('index.jade', {
+			 
+		});
+        //res.redirect('/');
     }
 
   });

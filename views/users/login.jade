@@ -1,0 +1,8 @@
+form.form-inline(method='post', action='/login')
+    div.form-group
+      label(for="exampleInputEmail1") Email address
+      input.form-control(name='user[email]', id="exampleInputEmail1", type="email", placeholder="Enter email")
+
+    div.form-group
+      label(for="exampleInputPassword1") Password
+      input.form-control(name='user[password]', id="exampleInputPassword1", placeholder="Password", type='password')

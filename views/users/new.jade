@@ -1,7 +1,8 @@
-.page
-  h2 Register
+extends ../layout.jade
+h2 Register
 
-  form.users(method='post', action='/users')
+block content
+  form.regNewUser(method='post', action='/users')
     include fields
     div
       input(type='submit', value='Register')
