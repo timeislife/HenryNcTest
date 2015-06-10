@@ -76,7 +76,7 @@ app.post('/users.:format?', function(req, res) {
   user.save(function(err) {
     if (err) return userSaveFailed();
 
-    req.flash('info', 'Your account has been created');
+    //req.flash('warning', 'Your account has been created');
     switch (req.params.format) {
       case 'json':
         res.send(user.toObject());
@@ -85,8 +85,9 @@ app.post('/users.:format?', function(req, res) {
       default:
         req.session.user_id = user.id;
 	    req.session.email = user.email;
+
 		res.render('index.jade', {
-			 
+			 message: {'type':'warning','message':'Your account has been created'}
 		});
         //res.redirect('/');
     }
@@ -94,6 +95,29 @@ app.post('/users.:format?', function(req, res) {
   });
 
 });
+
+app.get('/logout',loadUser,function(req, res) {
+	if (req.session) {
+		req.session.destroy(function() {});
+	  }
+	res.redirect('/sessions/new');
+});
+
+
+function loadUser(req, res, next) {
+  if (req.session.user_id) {
+    User.findById(req.session.user_id, function(err, user) {
+      if (user) {
+        req.currentUser = user;
+        next();
+      } else {
+        res.redirect('/sessions/new');
+      }
+    });
+  } else {
+    res.redirect('/sessions/new');
+  }
+}
 
 http.listen(3000, function(){
   console.log('listening on *:3000');

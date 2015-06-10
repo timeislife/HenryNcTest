@@ -4,10 +4,17 @@ html
     title= 'Nodepad'
     link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css')
     link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css')
-    script(type='text/javascript', src='ttps://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js')
+    script(type='text/javascript', src='http://ajax.aspnetcdn.com/ajax/jquery/jquery-1.11.2.min.js')
+    script(type='text/javascript', src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js')
     link(rel='stylesheet', href='/public/styles/app.css')
 body
     div.container
+      if message
+        div.row
+          div.col-md-12
+            div.alert(class='alert-' + message.type)
+              a.close(data-dismiss="alert") &times;
+              span=message.message
       div.row 
         div.col-md-4 icon here
         div.col-md-8 
@@ -15,6 +22,8 @@ body
             include users/login
           else
             p #{session.email}
+            p
+              a#logout(href='/logout') Log Out
       div.row
         div.col-md-12
           ul.nav.nav-pills
