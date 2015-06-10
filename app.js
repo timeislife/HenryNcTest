@@ -66,15 +66,21 @@ app.post('/users.:format?', function(req, res) {
 
   //WriteLogToFile( fs, null, JSON.stringify(user) );
 
-  function userSaveFailed() {
-    req.flash('error', 'Account creation failed');
+  function userSaveFailed(message) {
     res.render('users/new.jade', {
-      user: user 
+      user: user,
+	  message: {'type':'danger','message':message}
     });
   }
    
   user.save(function(err) {
-    if (err) return userSaveFailed();
+    if (err) 
+	{
+		var message = GetMongooseErrorMessage(err.code);
+		if( !message )
+			message = err.message;
+		return userSaveFailed(message);
+	}
 
     //req.flash('warning', 'Your account has been created');
     switch (req.params.format) {
@@ -103,6 +109,18 @@ app.get('/logout',loadUser,function(req, res) {
 	res.redirect('/sessions/new');
 });
 
+
+var GetMongooseErrorMessage = function( code )
+{
+	var ret = null;
+	switch( code )
+	{
+		case 11000:
+			ret = "Email has already been taken.";
+			break;
+	}
+	return ret;
+}
 
 function loadUser(req, res, next) {
   if (req.session.user_id) {

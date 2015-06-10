@@ -19,7 +19,7 @@ body
         div.col-md-4 icon here
         div.col-md-8 
           if !session || !session.email
-            include users/login
+            a(href='/sessions/new') Log In
           else
             p #{session.email}
             p
