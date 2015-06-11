@@ -24,40 +24,6 @@ body
                   span.icon-bar
                   span.icon-bar
               a.navbar-brand(href="#") Project name
-          if !session || !session.email      
-            form.navbar-form.navbar-right
-              div.form-group
-                input.form-control(type="text" placeholder="Email")
-              div.form-group
-                input.form-control(type="password" placeholder="Password")
-              button.btn.btn-success(type="submit") Sign in
-              a.btn.btn-primary(href='/users/new') Sign up
-          else
-            form.navbar-form.navbar-right
-              ul.nav.navbar-right.top-nav
-                li.dropdown
-                  a.dropdown-toggle(href="#" data-toggle="dropdown")
-                    i.fa.fa-user 
-                    |&nbsp;#{session.email}&nbsp;
-                    b.caret
-                  ul.dropdown-menu
-                    li
-                      a(href="#")
-                        i.fa.fa-fw.fa-user
-                        | Profile
-                    li
-                      a(href="#")
-                        i.fa.fa-fw.fa-envelope
-                        | Inbox
-                    li
-                      a(href="#")
-                        i.fa.fa-fw.fa-gear
-                        | Settings     
-                    li.divider                   
-                    li
-                      a(href="/logout")
-                        i.fa.fa-fw.fa-power-off
-                        | Log Out                
           div#navbarCollapse(class="collapse navbar-collapse")
               ul(class="nav navbar-nav")
                   li.active
@@ -65,7 +31,41 @@ body
                   li
                     a(href="/About") About
                   li
-                    a(href="/Contact") Contact                     
+                    a(href="/Contact") Contact
+              if !session || !session.email      
+                form.navbar-form.navbar-right
+                  div.form-group
+                    input.form-control(type="text" placeholder="Email")
+                  div.form-group
+                    input.form-control(type="password" placeholder="Password")
+                  button.btn.btn-success(type="submit") Sign in
+                  a.btn.btn-primary(href='/users/new') Sign up
+              else
+                form.navbar-form.navbar-right
+                  ul.nav.navbar-right.top-nav
+                    li.dropdown
+                      a.dropdown-toggle(href="#" data-toggle="dropdown")
+                        i.fa.fa-user 
+                        |&nbsp;#{session.email}&nbsp;
+                        b.caret
+                      ul.dropdown-menu
+                        li
+                          a(href="#")
+                            i.fa.fa-fw.fa-user
+                            | Profile
+                        li
+                          a(href="#")
+                            i.fa.fa-fw.fa-envelope
+                            | Inbox
+                        li
+                          a(href="#")
+                            i.fa.fa-fw.fa-gear
+                            | Settings     
+                        li.divider                   
+                        li
+                          a(href="/logout")
+                            i.fa.fa-fw.fa-power-off
+                            | Log Out                       
     div.container
       if message
         div.row
