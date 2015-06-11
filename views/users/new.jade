@@ -1,5 +1,6 @@
 extends ../layout.jade
-h2 Register
+block title 
+    title Register
 
 block content
   form.regNewUser(method='post', action='/users')
