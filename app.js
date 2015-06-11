@@ -44,7 +44,6 @@ app.use(function(req,res,next){
 
 app.get('/', function(req, res){
   //res.sendFile(__dirname + '/app.html');
-   console.log( JSON.stringify( session ) );
     res.render('index.jade', {
   });
 });
@@ -106,7 +105,7 @@ app.get('/logout',loadUser,function(req, res) {
 	if (req.session) {
 		req.session.destroy(function() {});
 	  }
-	res.redirect('/sessions/new');
+	res.redirect('/');
 });
 
 
