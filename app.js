@@ -4,6 +4,7 @@ var express = require('express'),
 	models = require('./models'),
 	mongoose = require('mongoose'),
 	User,
+	LoginToken,
 	flash  = require('flash'),
 	cookieParser = require('cookie-parser'),
 	session      = require('express-session'),
@@ -34,6 +35,7 @@ app.set('db-uri', 'mongodb://localhost/henrynctest-production');
 
 models.defineModels(mongoose, function() {
   app.User = User = mongoose.model('User');
+  app.LoginToken = LoginToken = mongoose.model('LoginToken');
   db = mongoose.connect(app.set('db-uri'));
 })
 
@@ -42,13 +44,69 @@ app.use(function(req,res,next){
     next();
 });
 
-app.get('/', function(req, res){
-  //res.sendFile(__dirname + '/app.html');
+function authenticateFromLoginToken(req, res, next) {
+  var cookie = JSON.parse(req.cookies.logintoken);
+
+  LoginToken.findOne({ email: cookie.email,
+                       series: cookie.series,
+                       token: cookie.token }, (function(err, token) {
+    if (!token) {
+      res.redirect('/sessions/new');
+      return;
+    }
+
+    User.findOne({ email: token.email }, function(err, user) {
+      if (user) {
+        req.session.user_id = user.id;
+        req.currentUser = user;
+
+        token.token = token.randomToken();
+        token.save(function() {
+          res.cookie('logintoken', token.cookieValue, { expires: new Date(Date.now() + 2 * 604800000), path: '/' });
+          next();
+        });
+      } else {
+        res.redirect('/sessions/new');
+      }
+    });
+  }));
+}
+
+function loadUser(req, res, next) {
+  if (req.session.user_id) {
+    User.findById(req.session.user_id, function(err, user) {
+      if (user) {
+        //req.currentUser = user;
+		req.session.user_id = user.id;
+	    req.session.email = user.email; 
+        next();
+      } else {
+        res.redirect('/sessions/new');
+      }
+    });
+  } else if (req.cookies.logintoken) {
+    authenticateFromLoginToken(req, res, next);
+  } else {
+    res.redirect('/sessions/new');
+  }
+}
+
+app.get('/', loadUser, function(req, res){
     res.render('index.jade', {
   });
 });
 
+// Sessions
+app.get('/sessions/new', function(req, res) {
+  res.render('sessions/new.jade', {
+	user: new User()
+  });
+});
+
 app.use("/public", express.static( path.join(__dirname, '/public')));
+
+
+
 
 app.get('/chat', function(req, res) {
   res.sendFile(__dirname + '/index.html');
@@ -68,7 +126,7 @@ app.post('/users.:format?', function(req, res) {
   function userSaveFailed(message) {
     res.render('users/new.jade', {
       user: user,
-	  message: {'type':'danger','message':message}
+	  message: {'type':'warning','message':message}
     });
   }
    
@@ -92,7 +150,7 @@ app.post('/users.:format?', function(req, res) {
 	    req.session.email = user.email;
 
 		res.render('index.jade', {
-			 message: {'type':'warning','message':'Your account has been created'}
+			 message: {'type':'success','message':'Your account has been created'}
 		});
         //res.redirect('/');
     }
@@ -101,12 +159,42 @@ app.post('/users.:format?', function(req, res) {
 
 });
 
+app.post('/sessions', function(req, res) {
+  User.findOne({ email: req.body.user.email }, function(err, user) {
+	  if( user && user.authenticate(req.body.user.password) )
+	  {
+		req.session.user_id = user.id;
+	    req.session.email = user.email; 
+
+		// Remember me
+		  if (req.body.remember_me) {
+			var loginToken = new LoginToken({ email: user.email });
+			loginToken.save(function() {
+			  res.cookie('logintoken', loginToken.cookieValue, { expires: new Date(Date.now() + 2 * 604800000), path: '/' });
+			  res.redirect('/');
+			});
+		  } else {
+			res.redirect('/');
+		  }
+	  }
+	  else
+	  {
+	  	res.render('sessions/new.jade', {
+			message: {'type':'warning','message':'Log in failed.'},
+			user:req.body.user
+		});
+	  }
+  });
+});
+
 app.get('/logout',loadUser,function(req, res) {
 	if (req.session) {
 		req.session.destroy(function() {});
 	  }
 	res.redirect('/');
 });
+
+
 
 
 var GetMongooseErrorMessage = function( code )
@@ -121,20 +209,6 @@ var GetMongooseErrorMessage = function( code )
 	return ret;
 }
 
-function loadUser(req, res, next) {
-  if (req.session.user_id) {
-    User.findById(req.session.user_id, function(err, user) {
-      if (user) {
-        req.currentUser = user;
-        next();
-      } else {
-        res.redirect('/sessions/new');
-      }
-    });
-  } else {
-    res.redirect('/sessions/new');
-  }
-}
 
 http.listen(3000, function(){
   console.log('listening on *:3000');

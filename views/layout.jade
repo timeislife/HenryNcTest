@@ -33,11 +33,11 @@ body
                   li
                     a(href="/Contact") Contact
               if !session || !session.email      
-                form.navbar-form.navbar-right
+                form.navbar-form.navbar-right(method="post", action="/sessions")
                   div.form-group
-                    input.form-control(type="text" placeholder="Email")
+                    input.form-control(type="text" name="user[email]"  placeholder="Email")
                   div.form-group
-                    input.form-control(type="password" placeholder="Password")
+                    input.form-control(type="password" name="user[password]" placeholder="Password")
                   button.btn.btn-success(type="submit") Sign in
                   a.btn.btn-primary(href='/users/new') Sign up
               else
@@ -46,7 +46,7 @@ body
                     li.dropdown
                       a.dropdown-toggle(href="#" data-toggle="dropdown")
                         i.fa.fa-user 
-                        |&nbsp;#{session.email}&nbsp;
+                        |&nbsp;#{session.email}&nbsp; 
                         b.caret
                       ul.dropdown-menu
                         li
