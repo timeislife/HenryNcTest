@@ -65,3 +65,21 @@ form.regNewUser
 .top-nav>.open>.dropdown-menu>li>a {
     white-space: normal;
 }
+
+/*body*/
+/*
+body {
+    margin-top: 50px;
+}
+
+@media(min-width:768px) {
+    body {
+        margin-top: 10px;
+    }
+}
+*/
+
+.allow-show-more
+{
+	overflow:visible!important;
+}
