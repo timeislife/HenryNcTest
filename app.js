@@ -76,7 +76,7 @@ function loadUser(req, res, next) {
   if (req.session.user_id) {
     User.findById(req.session.user_id, function(err, user) {
       if (user) {
-        //req.currentUser = user;
+        req.currentUser = user;
 		req.session.user_id = user.id;
 	    req.session.email = user.email; 
         next();
@@ -93,6 +93,7 @@ function loadUser(req, res, next) {
 
 app.get('/', loadUser, function(req, res){
     res.render('index.jade', {
+		reqA:req
   });
 });
 
@@ -189,6 +190,9 @@ app.post('/sessions', function(req, res) {
 
 app.get('/logout',loadUser,function(req, res) {
 	if (req.session) {
+		if( req.currentUser && req.currentUser.email )
+			LoginToken.remove({ email: req.currentUser.email }, function() {});
+		res.clearCookie('logintoken');
 		req.session.destroy(function() {});
 	  }
 	res.redirect('/');
