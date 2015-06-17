@@ -1,7 +1,9 @@
+//modules -------------------------------
 var express = require('express'),
     app = module.exports = express(),
 	jade = require('jade'),
 	models = require('./models'),
+	mongoHelper = require('./utilities/MongooseHelper'),
 	mongoose = require('mongoose'),
 	User,
 	LoginToken,
@@ -13,83 +15,34 @@ var express = require('express'),
 	morgan = require('morgan'),
 	CircularJSON = require('circular-json'),
 	bodyParser = require('body-parser'),
-	http = require('http').Server(app);
+	http = require('http').Server(app),
+	path = require('path'),
+	//About router
+	about = require('./routers/about'),
+	// create a write stream (in append mode)
+	accessLogStream = fs.createWriteStream(__dirname + '/mainlog.log', {flags: 'a'});
 
-var path = require('path');
-
-app.use(cookieParser());
-app.use(session({ secret: '123' }));
-app.use(flash());
-
-// parse urlencoded request bodies into req.body 
-app.use(bodyParser.urlencoded());
-
-// create a write stream (in append mode)
-var accessLogStream = fs.createWriteStream(__dirname + '/mainlog.log', {flags: 'a'})
-// setup the logger
-app.use(morgan('combined', {stream: accessLogStream}))
-
+//set application level variables -------------------------------------------
 app.set('views', __dirname + '/views');
 app.set('db-uri', 'mongodb://localhost/henrynctest-production');
 
 
-models.defineModels(mongoose, function() {
-  app.User = User = mongoose.model('User');
-  app.LoginToken = LoginToken = mongoose.model('LoginToken');
-  db = mongoose.connect(app.set('db-uri'));
-})
+//middlewares ------------------------------
+app.use(cookieParser());
+app.use(session({ secret: '123' }));
+app.use(flash());
+// parse urlencoded request bodies into req.body 
+app.use(bodyParser.urlencoded());
+// setup the logger
+app.use(morgan('combined', {stream: accessLogStream}));
 
 app.use(function(req,res,next){
     res.locals.session = req.session;
     next();
 });
 
-function authenticateFromLoginToken(req, res, next) {
-  var cookie = JSON.parse(req.cookies.logintoken);
-
-  LoginToken.findOne({ email: cookie.email,
-                       series: cookie.series,
-                       token: cookie.token }, (function(err, token) {
-    if (!token) {
-      res.redirect('/sessions/new');
-      return;
-    }
-
-    User.findOne({ email: token.email }, function(err, user) {
-      if (user) {
-        req.session.user_id = user.id;
-        req.currentUser = user;
-
-        token.token = token.randomToken();
-        token.save(function() {
-          res.cookie('logintoken', token.cookieValue, { expires: new Date(Date.now() + 2 * 604800000), path: '/' });
-          next();
-        });
-      } else {
-        res.redirect('/sessions/new');
-      }
-    });
-  }));
-}
-
-function loadUser(req, res, next) {
-  if (req.session.user_id) {
-    User.findById(req.session.user_id, function(err, user) {
-      if (user) {
-        req.currentUser = user;
-		req.session.user_id = user.id;
-	    req.session.email = user.email; 
-        next();
-      } else {
-        res.redirect('/sessions/new');
-      }
-    });
-  } else if (req.cookies.logintoken) {
-    authenticateFromLoginToken(req, res, next);
-  } else {
-    res.redirect('/sessions/new');
-  }
-}
+app.use("/public", express.static( path.join(__dirname, '/public')));
+app.use("/about", about);
 
 app.get('/', loadUser, function(req, res){
     res.render('index.jade', {
@@ -97,16 +50,18 @@ app.get('/', loadUser, function(req, res){
   });
 });
 
-// Sessions
+app.get('/admin', loadUser, function(req, res){
+    res.render('admin/index.jade', {
+		reqA:req
+  });
+});
+
+//Sessions
 app.get('/sessions/new', function(req, res) {
   res.render('sessions/new.jade', {
 	user: new User()
   });
 });
-
-app.use("/public", express.static( path.join(__dirname, '/public')));
-
-
 
 
 app.get('/chat', function(req, res) {
@@ -134,7 +89,7 @@ app.post('/users.:format?', function(req, res) {
   user.save(function(err) {
     if (err) 
 	{
-		var message = GetMongooseErrorMessage(err.code);
+		var message = mongoHelper.GetMongooseErrorMessageFromCode(err.code);
 		if( !message )
 			message = err.message;
 		return userSaveFailed(message);
@@ -198,25 +153,53 @@ app.get('/logout',loadUser,function(req, res) {
 	res.redirect('/');
 });
 
+//functions ----------------------------------------------
+function authenticateFromLoginToken(req, res, next) {
+  var cookie = JSON.parse(req.cookies.logintoken);
 
+  LoginToken.findOne({ email: cookie.email,
+                       series: cookie.series,
+                       token: cookie.token }, (function(err, token) {
+    if (!token) {
+      res.redirect('/sessions/new');
+      return;
+    }
 
+    User.findOne({ email: token.email }, function(err, user) {
+      if (user) {
+        req.session.user_id = user.id;
+        req.currentUser = user;
 
-var GetMongooseErrorMessage = function( code )
-{
-	var ret = null;
-	switch( code )
-	{
-		case 11000:
-			ret = "Email has already been taken.";
-			break;
-	}
-	return ret;
+        token.token = token.randomToken();
+        token.save(function() {
+          res.cookie('logintoken', token.cookieValue, { expires: new Date(Date.now() + 2 * 604800000), path: '/' });
+          next();
+        });
+      } else {
+        res.redirect('/sessions/new');
+      }
+    });
+  }));
 }
 
-
-http.listen(3000, function(){
-  console.log('listening on *:3000');
-});
+function loadUser(req, res, next) {
+  if (req.session.user_id) {
+    User.findById(req.session.user_id, function(err, user) {
+      if (user) {
+        req.currentUser = user;
+		req.session.user_id = user.id;
+	    req.session.email = user.email; 
+        next();
+      } else {
+        res.redirect('/sessions/new');
+      }
+    });
+  } else if (req.cookies.logintoken) {
+    authenticateFromLoginToken(req, res, next);
+  } else {
+    res.redirect('/sessions/new');
+  }
+}
 
 
 /*
@@ -244,3 +227,16 @@ var WriteLogToFile = function(fs, filepath , str)
 		}
 	});
 }
+
+
+//other logics -----------------------------------------
+models.defineModels(mongoose, function() {
+  app.User = User = mongoose.model('User');
+  app.LoginToken = LoginToken = mongoose.model('LoginToken');
+  db = mongoose.connect(app.set('db-uri'));
+})
+
+http.listen(3000, function(){
+  console.log('listening on *:3000');
+});
+
