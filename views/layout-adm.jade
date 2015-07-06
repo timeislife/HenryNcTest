@@ -26,7 +26,7 @@ body
                     span.icon-bar
                     span.icon-bar
                     span.icon-bar
-                a.navbar-brand(href="index.html") SB Admin
+                a.navbar-brand(href="./admin") Project name Admin
             //Top Menu Items
             ul.nav.navbar-right.top-nav
                 li.dropdown
@@ -101,7 +101,7 @@ body
                 li.dropdown
                     a.dropdown-toggle(href="#" data-toggle="dropdown")
                       i.fa.fa-user 
-                      | John Smith 
+                      |   #{reqA.currentUser.email}
                       b.caret
                     ul.dropdown-menu
                         li
@@ -170,15 +170,6 @@ body
 
         div#page-wrapper
             div.container-fluid
-                // Page Heading
-                div.row
-                    div.col-lg-12
-                        h1.page-header
-                           |  Dashboard 
-                           small Statistics Overview
-                        ol.breadcrumb
-                            li.active
-                                i.fa.fa-dashboard
-                                |  Dashboard
+                block content
 
 
