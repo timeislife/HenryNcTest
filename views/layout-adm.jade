@@ -28,105 +28,106 @@ body
                     span.icon-bar
                 a.navbar-brand(href="./admin") Project name Admin
             //Top Menu Items
-            ul.nav.navbar-right.top-nav
-                li.dropdown
-                    a.dropdown-toggle(href="#" data-toggle="dropdown")
-                      i.fa.fa-envelope
-                        b.caret
-                    ul.dropdown-menu.message-dropdown
-                        li.message-preview
-                            a(href="#")
-                                div.media
-                                    span.pull-left
-                                        img.media-object(src="http://placehold.it/50x50" alt="")
-                                    div.media-body
-                                        h5.media-heading
-                                          strong John Smith
-                                        p.small.text-muted
-                                          i.fa.fa-clock-o
-                                          | Yesterday at 4:32 PM
-                                        p Lorem ipsum dolor sit amet, consectetur...
-                        li.message-preview
-                            a(href="#")
-                                div.media
-                                    span.pull-left
-                                        img.media-object(src="http://placehold.it/50x50" alt="")
-                                    div.media-body
-                                        h5.media-heading
-                                          strong John Smith
-                                        p.small.text-muted
-                                          i.fa.fa-clock-o
-                                          | Yesterday at 4:32 PM
-                                        p Lorem ipsum dolor sit amet, consectetur...
-                        li.message-preview
-                            a(href="#")
-                                div.media
-                                    span.pull-left
-                                        img.media-object(src="http://placehold.it/50x50" alt="")
-                                    div.media-body
-                                        h5.media-heading
-                                          strong John Smith<
-                                        p.small.text-muted
-                                          i.fa.fa-clock-o
-                                          | Yesterday at 4:32 PM
-                                        p Lorem ipsum dolor sit amet, consectetur...
-                        li.message-footer
-                            a(href="#") Read All New Messages
-                li.dropdown
-                    a.dropdown-toggle(href="#" data-toggle="dropdown")
-                      i.fa.fa-bell
-                      b.caret
-                    ul.dropdown-menu.alert-dropdown
-                        li
-                            a(href="#") Alert Name 
-                              span.label.label-default Alert Badge
-                        li
-                            a(href="#") Alert Name 
-                              span.label.label-primary Alert Badge
-                        li
-                            a(href="#") Alert Name 
-                              span.label.label-success Alert Badge
-                        li
-                            a(href="#") Alert Name 
-                              span.label.label-info Alert Badge
-                        li
-                            a(href="#") Alert Name 
-                              span.label.label-warning Alert Badge
-                        li
-                            a(href="#") Alert Name 
-                              span.label.label-danger Alert Badge
-                        li.divider
-                        li
-                            a(href="#") View All
-                li.dropdown
-                    a.dropdown-toggle(href="#" data-toggle="dropdown")
-                      i.fa.fa-user 
-                      |   #{reqA.currentUser.email}
-                      b.caret
-                    ul.dropdown-menu
-                        li
-                            a(href="#")
-                              i.fa.fa-fw.fa-user 
-                              | Profile
-                        li
-                            a(href="#")
-                              i.fa.fa-fw.fa-envelope 
-                              | Inbox
-                        li
-                            a(href="#")
-                              i.fa.fa-fw.fa-gear 
-                              | Settings
-                        li.divider
-                        li
-                            a(href="#")
-                              i.fa.fa-fw.fa-power-off 
-                              | Log Out
+            if reqA && reqA.currentUser && reqA.currentUser.email             
+                ul.nav.navbar-right.top-nav
+                    li.dropdown
+                        a.dropdown-toggle(href="#" data-toggle="dropdown")
+                          i.fa.fa-envelope
+                            b.caret
+                        ul.dropdown-menu.message-dropdown
+                            li.message-preview
+                                a(href="#")
+                                    div.media
+                                        span.pull-left
+                                            img.media-object(src="http://placehold.it/50x50" alt="")
+                                        div.media-body
+                                            h5.media-heading
+                                              strong John Smith
+                                            p.small.text-muted
+                                              i.fa.fa-clock-o
+                                              | Yesterday at 4:32 PM
+                                            p Lorem ipsum dolor sit amet, consectetur...
+                            li.message-preview
+                                a(href="#")
+                                    div.media
+                                        span.pull-left
+                                            img.media-object(src="http://placehold.it/50x50" alt="")
+                                        div.media-body
+                                            h5.media-heading
+                                              strong John Smith
+                                            p.small.text-muted
+                                              i.fa.fa-clock-o
+                                              | Yesterday at 4:32 PM
+                                            p Lorem ipsum dolor sit amet, consectetur...
+                            li.message-preview
+                                a(href="#")
+                                    div.media
+                                        span.pull-left
+                                            img.media-object(src="http://placehold.it/50x50" alt="")
+                                        div.media-body
+                                            h5.media-heading
+                                              strong John Smith<
+                                            p.small.text-muted
+                                              i.fa.fa-clock-o
+                                              | Yesterday at 4:32 PM
+                                            p Lorem ipsum dolor sit amet, consectetur...
+                            li.message-footer
+                                a(href="#") Read All New Messages
+                    li.dropdown
+                        a.dropdown-toggle(href="#" data-toggle="dropdown")
+                          i.fa.fa-bell
+                          b.caret
+                        ul.dropdown-menu.alert-dropdown
+                            li
+                                a(href="#") Alert Name 
+                                  span.label.label-default Alert Badge
+                            li
+                                a(href="#") Alert Name 
+                                  span.label.label-primary Alert Badge
+                            li
+                                a(href="#") Alert Name 
+                                  span.label.label-success Alert Badge
+                            li
+                                a(href="#") Alert Name 
+                                  span.label.label-info Alert Badge
+                            li
+                                a(href="#") Alert Name 
+                                  span.label.label-warning Alert Badge
+                            li
+                                a(href="#") Alert Name 
+                                  span.label.label-danger Alert Badge
+                            li.divider
+                            li
+                                a(href="#") View All
+                    li.dropdown
+                        a.dropdown-toggle(href="#" data-toggle="dropdown")
+                          i.fa.fa-user 
+                            |   #{reqA.currentUser.email}
+                          b.caret
+                        ul.dropdown-menu
+                            li
+                                a(href="#")
+                                  i.fa.fa-fw.fa-user 
+                                  | Profile
+                            li
+                                a(href="#")
+                                  i.fa.fa-fw.fa-envelope 
+                                  | Inbox
+                            li
+                                a(href="#")
+                                  i.fa.fa-fw.fa-gear 
+                                  | Settings
+                            li.divider
+                            li
+                                a(href="#")
+                                  i.fa.fa-fw.fa-power-off 
+                                  | Log Out
             // Sidebar Menu Items - These collapse to the responsive navigation menu on small screens
             div.collapse.navbar-collapse.navbar-ex1-collapse
                 ul.nav.navbar-nav.side-nav
                     li.active
                         a(href="index.html")
-                            i.fa.fa-fw.fa-dashboard 
+                            i.fa.fa-fw.fa-dashboard
                             | Dashboard
                     li
                         a(href="charts.html")
@@ -166,6 +167,10 @@ body
                         a(href="index-rtl.html")
                             i.fa.fa-fw.fa-dashboard
                             | RTL Dashboard
+                    li
+                        a(href="index-rtl.html")
+                            i.fa.fa-fw.fa-group
+                            | Role management                            
             // /.navbar-collapse
 
         div#page-wrapper

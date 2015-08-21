@@ -19,6 +19,7 @@ var express = require('express'),
 	path = require('path'),
 	//About router
 	about = require('./routers/about'),
+	admin = require('./routers/admin'),
 	// create a write stream (in append mode)
 	accessLogStream = fs.createWriteStream(__dirname + '/mainlog.log', {flags: 'a'});
 
@@ -43,15 +44,10 @@ app.use(function(req,res,next){
 
 app.use("/public", express.static( path.join(__dirname, '/public')));
 app.use("/about", about);
+app.use("/admin", admin);
 
 app.get('/', loadUser, function(req, res){
     res.render('index.jade', {
-		reqA:req
-  });
-});
-
-app.get('/admin', loadUser, function(req, res){
-    res.render('admin/index.jade', {
 		reqA:req
   });
 });
