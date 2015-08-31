@@ -11,13 +11,21 @@ henryNcUtilities.authenticateFromLoginToken(req, res, next);
 
 */
 
+var Models;
 
 module.exports = function(models) {
+  Models = models;
+
   return {
-    authenticateFromLoginToken: function(req, res, next) {
+    authenticateFromLoginToken: AuthenticateFromLoginToken,
+    loadUser: LoadUser
+
+}
+
+function AuthenticateFromLoginToken(req, res, next) {
 		  var cookie = JSON.parse(req.cookies.logintoken);
 
-		  models.LoginToken.findOne({ email: cookie.email,
+		  Models.LoginToken.findOne({ email: cookie.email,
 							   series: cookie.series,
 							   token: cookie.token }, (function(err, token) {
 			if (!token) {
@@ -25,7 +33,7 @@ module.exports = function(models) {
 			  return;
 			}
 
-			models.User.findOne({ email: token.email }, function(err, user) {
+			Models.User.findOne({ email: token.email }, function(err, user) {
 			  if (user) {
 				req.session.user_id = user.id;
 				req.currentUser = user;
@@ -40,26 +48,26 @@ module.exports = function(models) {
 			  }
 			});
 		  }));
-    },
-    loadUser: function (req, res, next)
-    {
-	  if (req.session.user_id) {
-	    models.User.findById(req.session.user_id, function(err, user) {
-	      if (user) {
-	        req.currentUser = user;
-			req.session.user_id = user.id;
-		    req.session.email = user.email; 
-	        next();
-	      } else {
-	        res.redirect('/sessions/new');
-	      }
-	    });
-	  } else if (req.cookies.logintoken) {
-	     this.authenticateFromLoginToken(req, res, next);
-	  } else {
-	    res.redirect('/sessions/new');
-	  }
     }
-  };
 
+
+function LoadUser(req, res, next)
+{
+  if (req.session.user_id) {
+	Models.User.findById(req.session.user_id, function(err, user) {
+	  if (user) {
+		req.currentUser = user;
+		req.session.user_id = user.id;
+		req.session.email = user.email; 
+		next();
+	  } else {
+		res.redirect('/sessions/new');
+	  }
+	});
+  } else if (req.cookies.logintoken) {
+	 AuthenticateFromLoginToken(req, res, next);
+  } else {
+	res.redirect('/sessions/new');
+  }
 }
+};
