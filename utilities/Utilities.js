@@ -55,7 +55,7 @@ module.exports = function(models) {
 	      }
 	    });
 	  } else if (req.cookies.logintoken) {
-	    authenticateFromLoginToken(req, res, next);
+	     this.authenticateFromLoginToken(req, res, next);
 	  } else {
 	    res.redirect('/sessions/new');
 	  }

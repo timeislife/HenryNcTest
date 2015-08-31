@@ -10,7 +10,9 @@ User.findOne......
 
 */
 
-var mongoose = require('mongoose');
+var mongoose = require('mongoose'),
+	crypto = require('crypto');
+
 
 module.exports = function(db_uri) {
 
@@ -20,7 +22,7 @@ module.exports = function(db_uri) {
 	   defineModels(mongoose, function() {
 		  model.User = mongoose.model('User');
 		  model.LoginToken = mongoose.model('LoginToken');
-		  //mongoose.connect(db_uri);
+		  mongoose.connect(db_uri);
 	   });
 	   return model;
     }
