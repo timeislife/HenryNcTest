@@ -5,7 +5,6 @@ var express = require('express'),
 	models = require('./models'),
 	mongoHelper = require('./utilities/MongooseHelper'),
 	mongoose = require('mongoose'),
-	User,
 	LoginToken,
 	flash  = require('flash'),
 	cookieParser = require('cookie-parser'),
@@ -19,13 +18,30 @@ var express = require('express'),
 	path = require('path'),
 	//About router
 	about = require('./routers/about'),
-	admin = require('./routers/admin'),
+	//admin = require('./routers/admin'),
 	// create a write stream (in append mode)
 	accessLogStream = fs.createWriteStream(__dirname + '/mainlog.log', {flags: 'a'});
 
 //set application level variables -------------------------------------------
 app.set('views', __dirname + '/views');
 app.set('db-uri', 'mongodb://localhost/henrynctest-production');
+app.set('db-name', 'henrynctest-production');
+app.set('server-name', 'localhost');
+app.set('port-number', 27017);
+
+//global variables.
+conn = mongoose.createConnection(app.set('server-name'), app.set('db-name'), app.set('port-number'));
+
+//modules and utilities  begin ---------------
+var HenryNcModels = require("./Utilities/HenryNcModels");
+
+var henryNcModels = HenryNcModels(app.set('db-uri')).InitModels();
+var User = henryNcModels.User;
+var LoginToken = henryNcModels.LoginToken;
+
+var HenryNcUtilities = require("./Utilities/Utilities");
+var henryNcUtilities = HenryNcUtilities(henryNcModels);
+//modules and utilities  end --------------
 
 
 //middlewares ------------------------------
@@ -44,9 +60,10 @@ app.use(function(req,res,next){
 
 app.use("/public", express.static( path.join(__dirname, '/public')));
 app.use("/about", about);
-app.use("/admin", admin);
+//app.use("/admin", admin);
 
-app.get('/', loadUser, function(req, res){
+
+app.get('/', henryNcUtilities.loadUser, function(req, res){
     res.render('index.jade', {
 		reqA:req
   });
@@ -139,7 +156,7 @@ app.post('/sessions', function(req, res) {
   });
 });
 
-app.get('/logout',loadUser,function(req, res) {
+app.get('/logout',henryNcUtilities.loadUser,function(req, res) {
 	if (req.session) {
 		if( req.currentUser && req.currentUser.email )
 			LoginToken.remove({ email: req.currentUser.email }, function() {});
@@ -149,53 +166,6 @@ app.get('/logout',loadUser,function(req, res) {
 	res.redirect('/');
 });
 
-//functions ----------------------------------------------
-function authenticateFromLoginToken(req, res, next) {
-  var cookie = JSON.parse(req.cookies.logintoken);
-
-  LoginToken.findOne({ email: cookie.email,
-                       series: cookie.series,
-                       token: cookie.token }, (function(err, token) {
-    if (!token) {
-      res.redirect('/sessions/new');
-      return;
-    }
-
-    User.findOne({ email: token.email }, function(err, user) {
-      if (user) {
-        req.session.user_id = user.id;
-        req.currentUser = user;
-
-        token.token = token.randomToken();
-        token.save(function() {
-          res.cookie('logintoken', token.cookieValue, { expires: new Date(Date.now() + 2 * 604800000), path: '/' });
-          next();
-        });
-      } else {
-        res.redirect('/sessions/new');
-      }
-    });
-  }));
-}
-
-function loadUser(req, res, next) {
-  if (req.session.user_id) {
-    User.findById(req.session.user_id, function(err, user) {
-      if (user) {
-        req.currentUser = user;
-		req.session.user_id = user.id;
-	    req.session.email = user.email; 
-        next();
-      } else {
-        res.redirect('/sessions/new');
-      }
-    });
-  } else if (req.cookies.logintoken) {
-    authenticateFromLoginToken(req, res, next);
-  } else {
-    res.redirect('/sessions/new');
-  }
-}
 
 
 /*
@@ -226,11 +196,6 @@ var WriteLogToFile = function(fs, filepath , str)
 
 
 //other logics -----------------------------------------
-models.defineModels(mongoose, function() {
-  app.User = User = mongoose.model('User');
-  app.LoginToken = LoginToken = mongoose.model('LoginToken');
-  db = mongoose.connect(app.set('db-uri'));
-})
 
 http.listen(3000, function(){
   console.log('listening on *:3000');
