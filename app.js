@@ -30,16 +30,13 @@ app.set('port-number', 27017);
 //global variables.
 conn = mongoose.createConnection(app.set('server-name'), app.set('db-name'), app.set('port-number'));
 
-//modules and utilities  begin ---------------
-var HenryNcModels = require("./Utilities/HenryNcModels");
+//auth models and utility begin ---------------
+var authModels = require("./Models/authentication/models")(app.set('db-uri')).InitModels();
+var User = authModels.User;
+var LoginToken = authModels.LoginToken;
 
-var henryNcModels = HenryNcModels(app.set('db-uri')).InitModels();
-var User = henryNcModels.User;
-var LoginToken = henryNcModels.LoginToken;
-
-var HenryNcUtilities = require("./Utilities/Utilities");
-var henryNcUtilities = HenryNcUtilities(henryNcModels);
-//modules and utilities  end --------------
+var authUtilities = require("./Models/authentication/utility")(authModels);
+//auth models and utility end --------------
 
 
 //middlewares ------------------------------
@@ -61,7 +58,7 @@ app.use("/about", about);
 //app.use("/admin", admin);
 
 
-app.get('/', henryNcUtilities.loadUser, function(req, res){
+app.get('/', authUtilities.loadUser, function(req, res){
     res.render('index.jade', {
 		reqA:req
   });
@@ -154,7 +151,7 @@ app.post('/sessions', function(req, res) {
   });
 });
 
-app.get('/logout',henryNcUtilities.loadUser,function(req, res) {
+app.get('/logout',authUtilities.loadUser,function(req, res) {
 	if (req.session) {
 		if( req.currentUser && req.currentUser.email )
 			LoginToken.remove({ email: req.currentUser.email }, function() {});
