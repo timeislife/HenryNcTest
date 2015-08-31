@@ -2,7 +2,6 @@
 var express = require('express'),
     app = module.exports = express(),
 	jade = require('jade'),
-	models = require('./models'),
 	mongoHelper = require('./utilities/MongooseHelper'),
 	mongoose = require('mongoose'),
 	LoginToken,
