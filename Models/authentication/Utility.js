@@ -1,17 +1,40 @@
 /*
-Common functions.
+Authentication utility class.
 Example:
-var HenryNcModels = require("./HenryNcModels");
-var db-uri = "mongodb://localhost/henrynctest-production";
-var henryNcModels = HenryNcModels(db-uri).InitModels();
 
-var HenryNcUtilities = require("./HenryNcUtilities");
-var henryNcUtilities = HenryNcUtilities(henryNcModels);
-henryNcUtilities.authenticateFromLoginToken(req, res, next);
+var db-uri = "mongodb://localhost/henrynctest-production";
+var authModels = require("./Models/authentication/models")(app.set('db-uri')).InitModels();
+var User = authModels.User;
+var LoginToken = authModels.LoginToken;
+
+var authUtilities = require("./Models/authentication/utility")(authModels);
+
+-------------------------------------------------------
+app.get('/', authUtilities.loadUser, function(req, res){
+    res.render('index.jade', {
+		reqA:req
+  });
+});
+--------------------------------------------------------
+or 
+
+-------------------------------------------------------
+var accessDeniedUrl = '/sessions/new';
+app.get('/',function(req,res,next)
+{
+	authUtilities.loadUser( req,res,next, accessDeniedUrl );
+}
+, function(req, res){
+    res.render('index.jade', {
+		reqA:req
+  });
+});
+----------------------------------------------------------
 
 */
 
 var Models;
+var defaultAccessDeniedUrl = '/sessions/new';
 
 module.exports = function(models) {
   Models = models;
@@ -22,14 +45,15 @@ module.exports = function(models) {
 
 }
 
-function AuthenticateFromLoginToken(req, res, next) {
+function AuthenticateFromLoginToken(req, res, next, accessDeniedUrl) {
+	  if( !accessDeniedUrl ) accessDeniedUrl = defaultAccessDeniedUrl;
 	  var cookie = JSON.parse(req.cookies.logintoken);
 
 	  Models.LoginToken.findOne({ email: cookie.email,
 						   series: cookie.series,
 						   token: cookie.token }, (function(err, token) {
 		if (!token) {
-		  res.redirect('/sessions/new');
+		  res.redirect(accessDeniedUrl);
 		  return;
 		}
 
@@ -44,15 +68,17 @@ function AuthenticateFromLoginToken(req, res, next) {
 			  next();
 			});
 		  } else {
-			res.redirect('/sessions/new');
+			res.redirect(accessDeniedUrl);
 		  }
 		});
 	  }));
 }
 
 
-function LoadUser(req, res, next)
+function LoadUser(req, res, next, accessDeniedUrl)
 {
+  if( !accessDeniedUrl ) accessDeniedUrl = defaultAccessDeniedUrl;
+
   if (req.session.user_id) {
 	Models.User.findById(req.session.user_id, function(err, user) {
 	  if (user) {
@@ -61,13 +87,13 @@ function LoadUser(req, res, next)
 		req.session.email = user.email; 
 		next();
 	  } else {
-		res.redirect('/sessions/new');
+		res.redirect(accessDeniedUrl);
 	  }
 	});
   } else if (req.cookies.logintoken) {
 	 AuthenticateFromLoginToken(req, res, next);
   } else {
-	res.redirect('/sessions/new');
+	res.redirect(accessDeniedUrl);
   }
 }
 };

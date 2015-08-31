@@ -1,11 +1,11 @@
 /*
-Gets models with database connected.
+Gets authentication models with database connected.
 Example:
 var HenryNcModels = require("./HenryNcModels");
 var db_uri = "mongodb://localhost/henrynctest-production";
-var henryNcModels = HenryNcModels(db_uri).InitModels();
-var User = henryNcModels.User;
-var LoginToken = henryNcModels.User;
+var authModels = require("./Models/authentication/models")(db_uri)).InitModels();
+var User = authModels.User;
+var LoginToken = authModels.LoginToken;
 User.findOne......
 
 */
