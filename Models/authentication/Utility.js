@@ -45,8 +45,8 @@ module.exports = function(models) {
 
 }
 
-function AuthenticateFromLoginToken(req, res, next, accessDeniedUrl) {
-	  if( !accessDeniedUrl ) accessDeniedUrl = defaultAccessDeniedUrl;
+function AuthenticateFromLoginToken(req, res, next) {
+	  var accessDeniedUrl = defaultAccessDeniedUrl;
 	  var cookie = JSON.parse(req.cookies.logintoken);
 
 	  Models.LoginToken.findOne({ email: cookie.email,
@@ -75,9 +75,9 @@ function AuthenticateFromLoginToken(req, res, next, accessDeniedUrl) {
 }
 
 
-function LoadUser(req, res, next, accessDeniedUrl)
+function LoadUser(req, res, next)
 {
-  if( !accessDeniedUrl ) accessDeniedUrl = defaultAccessDeniedUrl;
+  var accessDeniedUrl = defaultAccessDeniedUrl;
 
   if (req.session.user_id) {
 	Models.User.findById(req.session.user_id, function(err, user) {

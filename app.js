@@ -58,7 +58,7 @@ app.use("/about", about);
 app.use("/admin", admin);
 
 
-app.get('/', authUtilities.loadUser, function(req, res){
+app.get('/', authUtilities.loadUser, function(req, res, next){
     res.render('index.jade', {
 		reqA:req
   });
