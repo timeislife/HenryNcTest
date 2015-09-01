@@ -1,13 +1,7 @@
 var express = require('express');
 var router = express.Router();
+var app = require("../app");
 
-var HenryNcModels = require("../Utilities/HenryNcModels");
-var db_uri = "mongodb://localhost/henrynctest-production";
-var henryNcModels = HenryNcModels(db_uri).InitModels();
-var User = henryNcModels.User;
-
-var HenryNcUtilities = require("../Utilities/Utilities");
-var henryNcUtilities = HenryNcUtilities(henryNcModels);
 
 // middleware specific to this router
 router.use(function timeLog(req, res, next) {
@@ -16,7 +10,8 @@ router.use(function timeLog(req, res, next) {
 });
 
 // define the home page route
-router.get('/', henryNcUtilities.loadUser, function(req, res) {
+router.get('/', function(req, res,next) {
+	app.set('AuthUtilities').loadUser(req,res,next);
     res.render('admin/index.jade', {
 		reqA:req
   });

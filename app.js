@@ -16,7 +16,7 @@ var express = require('express'),
 	path = require('path'),
 	//About router
 	about = require('./routers/about'),
-	//admin = require('./routers/admin'),
+	admin = require('./routers/admin'),
 	// create a write stream (in append mode)
 	accessLogStream = fs.createWriteStream(__dirname + '/mainlog.log', {flags: 'a'});
 
@@ -37,7 +37,7 @@ var LoginToken = authModels.LoginToken;
 
 var authUtilities = require("./Models/authentication/utility")(authModels);
 //auth models and utility end --------------
-
+app.set('AuthUtilities', authUtilities);
 
 //middlewares ------------------------------
 app.use(cookieParser());
@@ -55,7 +55,7 @@ app.use(function(req,res,next){
 
 app.use("/public", express.static( path.join(__dirname, '/public')));
 app.use("/about", about);
-//app.use("/admin", admin);
+app.use("/admin", admin);
 
 
 app.get('/', authUtilities.loadUser, function(req, res){
