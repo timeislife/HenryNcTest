@@ -21,6 +21,17 @@ router.get('/', function(req,res,next){
 });
 
 
+router.get('/general', function(req,res,next){
+		app.set('AuthUtilities').loadUser(req,res,next);
+	},
+	function(req, res,next) {
+	
+    res.render('admin/general.jade', {
+		reqA:req
+  });
+});
+
+
 
 //functions ----------------------------------------------
 
