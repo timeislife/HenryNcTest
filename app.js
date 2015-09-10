@@ -20,6 +20,7 @@ var express = require('express'),
 	// create a write stream (in append mode)
 	accessLogStream = fs.createWriteStream(__dirname + '/mainlog.log', {flags: 'a'});
 
+
 //set application level variables -------------------------------------------
 app.set('views', __dirname + '/views');
 app.set('db-uri', 'mongodb://localhost/henrynctest-production');

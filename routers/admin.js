@@ -10,8 +10,11 @@ router.use(function timeLog(req, res, next) {
 });
 
 // define the home page route
-router.get('/', function(req, res,next) {
-	app.set('AuthUtilities').loadUser(req,res,next);
+router.get('/', function(req,res,next){
+		app.set('AuthUtilities').loadUser(req,res,next);
+	},
+	function(req, res,next) {
+	
     res.render('admin/index.jade', {
 		reqA:req
   });
