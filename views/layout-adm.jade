@@ -124,19 +124,19 @@ body
                                   | Log Out
             // Sidebar Menu Items - These collapse to the responsive navigation menu on small screens
             div.collapse.navbar-collapse.navbar-ex1-collapse
-                ul.nav.navbar-nav.side-nav
+                ul.nav.navbar-nav.side-nav             
                     li.active
-                        a(href="index.html")
+                        a(href="/admin")
                             i.fa.fa-fw.fa-dashboard
-                            | Dashboard
+                            | Home
+                    li
+                        a(href="/admin/general")
+                            i.fa.fa-fw.fa-table 
+                            | General settings                            
                     li
                         a(href="charts.html")
                             i.fa.fa-fw.fa-bar-chart-o 
                             | Charts
-                    li
-                        a(href="tables.html")
-                            i.fa.fa-fw.fa-table 
-                            | Tables
                     li
                         a(href="forms.html")
                             i.fa.fa-fw.fa-edit 
