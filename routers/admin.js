@@ -11,7 +11,7 @@ router.use(function timeLog(req, res, next) {
 
 // define the home page route
 router.get('/', function(req,res,next){
-		app.set('AuthUtilities').loadUser(req,res,next);
+		app.AuthUtilities.loadUser(req,res,next);
 	},
 	function(req, res,next) {
 	
@@ -22,7 +22,7 @@ router.get('/', function(req,res,next){
 
 
 router.get('/general', function(req,res,next){
-		app.set('AuthUtilities').loadUser(req,res,next);
+		app.AuthUtilities.loadUser(req,res,next);
 	},
 	function(req, res,next) {
 	
@@ -31,6 +31,10 @@ router.get('/general', function(req,res,next){
   });
 });
 
+
+router.post('/general', function(req, res) {
+  var user = new User(req.body.user);
+});
 
 
 //functions ----------------------------------------------

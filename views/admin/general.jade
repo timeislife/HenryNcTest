@@ -4,7 +4,7 @@ block title
 block content
  content 
    h1 general settings
-   form
+   form(method='post', action='/general')
       div.form-group
         label(for="inputSiteName") Site name
         input.form-control(type="text" id="inputSiteName" style="width:200px;" placeholder="enter site name here")

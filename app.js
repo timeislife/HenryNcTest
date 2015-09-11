@@ -38,7 +38,10 @@ var LoginToken = authModels.LoginToken;
 
 var authUtilities = require("./Models/authentication/utility")(authModels);
 //auth models and utility end --------------
-app.set('AuthUtilities', authUtilities);
+//app.set('AuthUtilities', authUtilities);
+app.AuthUtilities = authUtilities;
+app.MongoConnection = conn;
+
 
 //middlewares ------------------------------
 app.use(cookieParser());
