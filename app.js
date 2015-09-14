@@ -83,6 +83,8 @@ app.use("/public", express.static( path.join(__dirname, '/public')));
 app.use("/about", about);
 app.use("/admin", admin);
 
+app.use("/assets", express.static( path.join(__dirname, '/sitetemplates/site1/assets')));
+
 
 app.get('/', authUtilities.loadUser, function(req, res, next){
     res.render('index.jade', {
