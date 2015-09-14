@@ -1,6 +1,12 @@
+body{
+	background:#D2D460;
+	text-align:center;
+}
+
 #globalContainer
 {
 	width:1024px;
-	min-height:768px;
-	border:solid 1px black;
+	margin:0 auto;
+	background:#fff;
+	text-align:left;
 }
