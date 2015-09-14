@@ -43,6 +43,7 @@ app.AuthUtilities = authUtilities;
 app.MongoConnection = conn;
 app.Mongoose = mongoose;
 app.MongoHelper = mongoHelper;
+var generalSettings = null;
 
 
 //middlewares ------------------------------
@@ -56,6 +57,25 @@ app.use(morgan('combined', {stream: accessLogStream}));
 
 app.use(function(req,res,next){
     res.locals.session = req.session;
+
+	if( !generalSettings )
+	{
+		//get general settings.
+		app.MongoHelper.QueryARecord( app.Mongoose, app.set('db-uri'), app.set('db-name') , "configurations", {"key":"general"}, {}, 
+				function(entity)
+				{
+					if( !entity ) entity = {};
+					//console.log('GET general setting ID: ' + entity._id);
+					 generalSettings = entity;
+				},
+				function(err)
+				{
+					logger.error(err.message+":"+err.stack);
+				}
+			);
+	}
+	app.locals.GeneralSettings = generalSettings;
+
     next();
 });
 
