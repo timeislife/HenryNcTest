@@ -41,6 +41,8 @@ var authUtilities = require("./Models/authentication/utility")(authModels);
 //app.set('AuthUtilities', authUtilities);
 app.AuthUtilities = authUtilities;
 app.MongoConnection = conn;
+app.Mongoose = mongoose;
+app.MongoHelper = mongoHelper;
 
 
 //middlewares ------------------------------

@@ -161,7 +161,7 @@ exports.FindAllRecords = function(mongoose, dbUri, dbName, collectionName, succe
 	);
 	  
 */
-exports.UpdateRecord = function(mongoose, dbUri, dbName, collectionName, query, update, options)
+exports.UpdateRecord = function(mongoose, dbUri, dbName, collectionName, query, update, options, successFunc, failFunc)
 {
 	var pos1 = dbUri.lastIndexOf("/");
 	var rootUri = dbUri.substr( 0, pos1 );
@@ -171,8 +171,29 @@ exports.UpdateRecord = function(mongoose, dbUri, dbName, collectionName, query, 
 		if( err ) {  failFunc(err); return; }
 		var coll = connection.db.collection(collectionName)
 		coll.update(  query, update, options );
+		successFunc();
 	});
 }
+
+
+
+exports.QueryARecord = function(mongoose, dbUri, dbName, collectionName, query, projections,  successFunc, failFunc)
+{
+	var pos1 = dbUri.lastIndexOf("/");
+	var rootUri = dbUri.substr( 0, pos1 );
+	var newDbUri = rootUri + "/" + dbName;
+	var connection = mongoose.createConnection(newDbUri);
+	connection.db.open( function(err){
+		if( err ) {  failFunc(err); return; }
+		var coll = connection.db.collection(collectionName)
+		var cursor = coll.findOne(  query, projections ,function(err,obj)
+		{
+			if( err ) failFunc(err);
+			successFunc(obj);
+		});		
+	});
+}
+
 
 
 /*
@@ -203,8 +224,12 @@ exports.InsertRecord = function(mongoose, dbUri, dbName, collectionName, doc, su
 	connection.db.open( function(err){
 		if( err ) {  failFunc(err); return; }
 		var coll = connection.db.collection(collectionName)
-		coll.insert(  doc );
-		successFun();
+		coll.insert(  doc, function(err, result)
+		{
+			if( err ) failFunc(err);
+			successFun(result); //result example: {"ok":1,"n":1}
+		});
+		
 	});
 }
 
@@ -247,6 +272,24 @@ exports.FindAllRecordsWithProjections = function(mongoose, dbUri, dbName, collec
 
 		var coll = connection.db.collection(collectionName)
 		coll.find({},projections).toArray(function(err, records) {
+			if( err ) {  failFunc(err); return; }
+			successFun( records );
+		}); 
+	});
+}
+
+
+exports.FindAllRecordsWithProjectionsWithSort = function(mongoose, dbUri, dbName, collectionName, projections, sortby, successFun, failFunc)
+{
+	var pos1 = dbUri.lastIndexOf("/");
+	var rootUri = dbUri.substr( 0, pos1 );
+	var newDbUri = rootUri + "/" + dbName;
+	var connection = mongoose.createConnection(newDbUri);
+	connection.db.open( function(err){
+		if( err ) {  failFunc(err); return; }
+
+		var coll = connection.db.collection(collectionName)
+		coll.find({},projections).sort(sortby).toArray(function(err, records) {
 			if( err ) {  failFunc(err); return; }
 			successFun( records );
 		}); 
@@ -317,5 +360,19 @@ exports.RemoveEntityByID = function(mongoose, dbUri, dbName, collectionName, idP
 		var coll = connection.db.collection(collectionName)
 		coll.remove({_id:idPar});
 		successFun();
+	});
+}
+
+
+
+exports.GetEntityByID_Old = function(mongoose, collectionName, idPar, successFun, failFunc)
+{
+	mongoose.model(collectionName).findById(idPar, function (err, entity) {
+		if (err) {
+			failFunc(err);
+		} 
+		else {
+			successFun(entity);
+		}
 	});
 }

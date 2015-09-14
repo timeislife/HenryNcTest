@@ -4,8 +4,8 @@ block title
 block content
  content 
    h1 general settings
-   form(method='post', action='/general')
+   form(method='post', action='/admin/general')
       div.form-group
         label(for="inputSiteName") Site name
-        input.form-control(type="text" id="inputSiteName" style="width:200px;" placeholder="enter site name here")
+        input.form-control(type="text" id="inputSiteName" name="site_name" value=settings.site_name || '' style="width:200px;" placeholder="enter site name here")
       button(type="submit" class="btn btn-default") Save
