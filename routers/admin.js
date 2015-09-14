@@ -48,23 +48,55 @@ router.get('/general', function(req,res,next){
 router.post('/general', function(req, res) {
   var siteName =  req.body.site_name;
 
-app.MongoHelper.UpdateRecord( app.Mongoose, app.set('db-uri'), app.set('db-name') , "configurations", 
-	{ "key": "general" }, //query
-	{ "key": "general", "site_name": siteName },   //update
-	{ upsert: true },  //options
-	function()
-	{
-		console.log("update success");
-		res.redirect('/admin/general');
-	},
-	function(err)
-	{
-		console.log(err);
-	}
-);
+	app.MongoHelper.UpdateRecord( app.Mongoose, app.set('db-uri'), app.set('db-name') , "configurations", 
+		{ "key": "general" }, //query
+		{ "key": "general", "site_name": siteName },   //update
+		{ upsert: true },  //options
+		function()
+		{
+			console.log("update success");
+			res.redirect('/admin/general');
+		},
+		function(err)
+		{
+			console.log(err);
+		}
+	);
 
 });
 
+
+router.post('/uploadlogo',function(req,res){
+     //var dirname = require('path').dirname(__dirname);
+	 console.log("/uploadlogo");
+	 app.WriteLogToFile( app.FS, null, app.CircularJSON.stringify(req) );
+
+
+     var filename = req.files.file.name;
+     var path = req.files.file.path;
+     var type = req.files.file.mimetype;
+	 var originalname = req.files.file.originalname;
+	 var mimetype = req.files.file.mimetype;
+
+	 var filePath = path;
+	 var metadataObj = {imageusage:"logo", oname:originalname,mtype:mimetype};
+	 var conn = mongoose.createConnection(lawregulation2_server_name, lawregulation2_db_name, 27017);
+
+	app.AttchHelper.SaveFileWithMetadata( app.Mongoose, conn, app.Fs, filePath, filename, metadataObj, 
+		function()
+		{
+		   logger.info("upload successfully");
+		   //res.redirect("/lawregulation2/" + req.params.id + "/edit?delayload=1");
+		   res.json({"sucess":true});
+		},
+		function( err )
+		{
+		   res.json({"sucess":true, "error":err.message+":"+err.stack});
+		   console.log(err.message+":"+err.stack);
+		}
+	);
+
+});
 
 //functions ----------------------------------------------
 

@@ -3,6 +3,7 @@ var express = require('express'),
     app = module.exports = express(),
 	jade = require('jade'),
 	mongoHelper = require('./utilities/MongooseHelper'),
+	attchHelper = require('./utilities/AttachmentHelper'),
 	mongoose = require('mongoose'),
 	flash  = require('flash'),
 	cookieParser = require('cookie-parser'),
@@ -43,6 +44,10 @@ app.AuthUtilities = authUtilities;
 app.MongoConnection = conn;
 app.Mongoose = mongoose;
 app.MongoHelper = mongoHelper;
+app.AttchHelper = attchHelper;
+app.FS = fs;
+app.BodyParser = bodyParser;
+app.CircularJSON = CircularJSON;
 var generalSettings = null;
 
 
@@ -201,7 +206,7 @@ Usage:
 	filepath = __dirname + '/debug.log';
     WriteLogToFile( fs, filepath, JSON.stringify(obj) );
 */
-var WriteLogToFile = function(fs, filepath , str)
+var WriteLogToFile = app.WriteLogToFile = function(fs, filepath , str)
 {
 	if( !filepath )
 	{
