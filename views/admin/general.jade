@@ -10,7 +10,7 @@ block content
         input.form-control(type="text" id="inputSiteName" name="site_name" value=settings.site_name || '' style="width:200px;" placeholder="enter site name here")
       div.form-group
         label(for="inputSiteName") Site logo
-        div(style="clear:both")
+        div#logoArea(style="clear:both")
             input.form-toolbar-button(type="file" name="logofile" style="float:left;margin-left:0px;")
             input.form-toolbar-button#btnUploadLogo(type='button', value='Upload' style="float:left;")      
       div.form-group(style="clear:both;")      
@@ -60,7 +60,7 @@ block content
                     if(typeof data.error === 'undefined')
                     {
                         // Success so call function to process the form
-                        //LoadAttachments();
+                        ShowLogo(data.logoid);
                         // submitForm(event, data);
                     }
                     else
@@ -78,6 +78,14 @@ block content
             });
 
 
-        }        
+        }   
+
+        function ShowLogo(fileid)
+        {
+            if( fileid && fileid != "000000000000000000000000" )
+            {
+                $("#logoArea").html("<div style='width:200px;height:100px;float:left'><img style='width:100%' src='/imageapi/" + fileid + "'/></div>");
+            }
+        }     
 
         // upload asyn end ------

@@ -85,7 +85,18 @@ router.post('/uploadlogo',function(req,res){
 		{
 		   console.log("upload successfully");
 		   //res.redirect("/lawregulation2/" + req.params.id + "/edit?delayload=1");
-		   res.json({"sucess":true});
+			//get logo file id
+			app.MongoHelper.QueryARecord( app.Mongoose, app.set('db-uri'), app.set('db-name') , "fs.files", {"metadata.imageusage":"logo"}, {}, 
+					function(entity)
+					{
+						res.json({"sucess":true, "logoid": entity._id});
+					},
+					function(err)
+					{
+						res.json({"sucess":true, "error":err.message+":"+err.stack})
+					}
+				);
+
 		},
 		function( err )
 		{
@@ -93,8 +104,9 @@ router.post('/uploadlogo',function(req,res){
 		   console.log(err.message+":"+err.stack);
 		}
 	);
-
 });
+
+
 
 //functions ----------------------------------------------
 

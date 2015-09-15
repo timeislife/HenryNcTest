@@ -197,6 +197,37 @@ app.get('/logout',authUtilities.loadUser,function(req, res) {
 });
 
 
+app.get('/imageapi/:id', function(req, res) {
+	var id = req.params.id;
+	//var metatype="image/jpg";
+	var metatype=null;
+	attchHelper.RenderFileByIdWithMetaType( mongoose, conn, id, res, metatype, null,
+		function()
+		{
+			console.log("success");
+		},
+		function(err)
+		{
+			console.log(err.message+":"+err.stack);
+		}
+	);
+});
+
+
+app.get('/header-logo-id', function(req, res) {
+	mongoHelper.QueryARecord( mongoose, app.set('db-uri'), app.set('db-name') , "fs.files", {"metadata.imageusage":"logo"}, {}, 
+		function(entity)
+		{
+			if( entity ) res.json({"sucess":true, "logoid":entity._id})
+			else res.json({"sucess":true, "logoid":"000000000000000000000000"})
+		},
+		function(err)
+		{
+			res.json({"sucess":true, "error":err.message+":"+err.stack})
+		}
+	);
+});
+
 /*
 //Parameters:
 //fs, node.js fs object.
