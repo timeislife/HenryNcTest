@@ -80,31 +80,66 @@ router.post('/uploadlogo',function(req,res){
 	 var metadataObj = {imageusage:"logo", oname:originalname,mtype:mimetype};
 	 var conn = app.Mongoose.createConnection(app.set('server-name'), app.set('db-name'), 27017);
 
-	app.AttchHelper.SaveFileWithMetadata( app.Mongoose, conn, app.Fs, filePath, filename, metadataObj, 
-		function()
+	 DeleteOldHeaderLogos( 
+		function(){
+			console.log("here");
+			app.AttchHelper.SaveFileWithMetadata( app.Mongoose, conn, app.Fs, filePath, filename, metadataObj, 
+				function()
+				{
+				   console.log("upload successfully");
+				   res.json({"sucess":true});
+				},
+				function( err )
+				{
+				   res.json({"sucess":true, "error":err.message+":"+err.stack});
+				   console.log(err.message+":"+err.stack);
+				}
+			);
+	    }, 
+		function(err)
 		{
-		   console.log("upload successfully");
-		   //res.redirect("/lawregulation2/" + req.params.id + "/edit?delayload=1");
-			//get logo file id
-			app.MongoHelper.QueryARecord( app.Mongoose, app.set('db-uri'), app.set('db-name') , "fs.files", {"metadata.imageusage":"logo"}, {}, 
-					function(entity)
+			console.log(err);
+			res.json({"sucess":true, "error":err.message+":"+err.stack})
+		}
+	 );
+
+
+});
+
+function DeleteOldHeaderLogos(successFunc, failFunc)
+{
+	//delete previous logo files.
+	app.MongoHelper.QueryRecords( app.Mongoose, app.set('db-uri'), app.set('db-name') , "fs.files",  
+		{"metadata.imageusage":"logo"}, //query
+		{}, 
+		function(coll)
+		{  
+			console.log(coll.length);
+			if( coll.length == 0 ) successFunc();
+			for (i = 0; i < coll.length; i++) { 
+				var doc = coll[i];
+				app.AttchHelper.DeleteFile(  app.Mongoose, conn, {"_id": doc._id}, 
+					function()
 					{
-						res.json({"sucess":true, "logoid": entity._id});
-					},
+						console.log("success to delete previous logo:" + doc._id );	
+						if( i = coll.length - 1 ) successFunc();
+					}, 
 					function(err)
 					{
-						res.json({"sucess":true, "error":err.message+":"+err.stack})
+						console.log(err);
+						failFunc(err);
 					}
 				);
-
+			}
 		},
-		function( err )
+		function(err)
 		{
-		   res.json({"sucess":true, "error":err.message+":"+err.stack});
-		   console.log(err.message+":"+err.stack);
+			console.log(err);
+			failFunc(err);
 		}
 	);
-});
+
+}
 
 
 

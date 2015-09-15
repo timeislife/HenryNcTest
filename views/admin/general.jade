@@ -10,9 +10,9 @@ block content
         input.form-control(type="text" id="inputSiteName" name="site_name" value=settings.site_name || '' style="width:200px;" placeholder="enter site name here")
       div.form-group
         label(for="inputSiteName") Site logo
-        div(style="width:200px;height:100px;display:block")
-            img#imglogo(style="width:100%" src="/header-logo-url")
-        div#logoArea(style="clear:both")
+        div(style="width:200px;height:200px;display:block")
+            img#imglogo(style="height:100%" src="/header-logo-url")
+        div#logoArea(style="clear:both;display:block;")
             input.form-toolbar-button(type="file" name="logofile" style="float:left;margin-left:0px;")
             input.form-toolbar-button#btnUploadLogo(type='button', value='Upload' style="float:left;")      
       div.form-group(style="clear:both;")      
@@ -84,6 +84,7 @@ block content
 
         function ShowLogo(fileid)
         {
+            alert(fileid);
             if( fileid && fileid != "000000000000000000000000" )
             {
                 $("#imglogo").attr("src", "/imageapi/" + fileid );

@@ -179,6 +179,35 @@ exports.SaveFileWithMetadata = function(mongoose, conn, fs, filePath, filenamePa
 }
 
 /*
+Delete a file from GridFS
+NOTE: for options parameter, at least an _id or filename should be provided.
+Example:
+	attchHelper = require('./utilities/AttachmentHelper');
+	var conn = mongoose.createConnection('localhost', 'KMSystem-DEV', 27017);
+
+	attchHelper.DeleteFile( mongoose, conn, {"_id":"55f7870b6d2c236c25b34881"} , 
+		function()
+		{
+		   console.log("success!");
+		},
+		function( err )
+		{
+		   console.log(err);
+		}
+	);
+*/
+exports.DeleteFile = function(mongoose, conn, options, successFun, failFunc) {
+	var Grid = require('gridfs-stream');
+	Grid.mongo = mongoose.mongo;
+
+	var gfs = Grid(conn.db);
+	gfs.remove(options, function (err) {
+	  if (err) return failFunc(err);
+	  successFun();
+	});
+}
+
+/*
 Get the attachments by metadata property.
 Example:
 	attchHelper = require('./utilities/AttachmentHelper');
