@@ -11,7 +11,7 @@ block content
       div.form-group
         label(for="inputSiteName") Site logo
         div(style="width:200px;height:200px;display:block")
-            img#imglogo(style="height:100%" src="/header-logo-url")
+            img#imglogo(style="height:100%")
         div#logoArea(style="clear:both;display:block;")
             input.form-toolbar-button(type="file" name="logofile" style="float:left;margin-left:0px;")
             input.form-toolbar-button#btnUploadLogo(type='button', value='Upload' style="float:left;")      
@@ -62,7 +62,8 @@ block content
                     if(typeof data.error === 'undefined')
                     {
                         // Success so call function to process the form
-                        ShowLogo(data.logoid);
+                        //ShowLogo(data.logoid);
+                        RenderHeaderLogo("imglogo");
                         // submitForm(event, data);
                     }
                     else

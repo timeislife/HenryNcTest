@@ -81,23 +81,17 @@ router.post('/uploadlogo',function(req,res,next){
 
 	 DeleteOldHeaderLogos( 
 		function(){
-		    setTimeout( 
+			app.AttchHelper.SaveFileWithMetadata( app.Mongoose, app.Conn, app.Fs, filePath, filename, metadataObj, 
 				function()
 				{
-					app.AttchHelper.SaveFileWithMetadata( app.Mongoose, app.Conn, app.Fs, filePath, filename, metadataObj, 
-						function()
-						{
-						   console.log("upload successfully");
-						   res.json({"sucess":true});
-						},
-						function( err )
-						{
-						   res.json({"sucess":true, "error":err.message+":"+err.stack});
-						   console.log(err.message+":"+err.stack);
-						}
-					);
+				   console.log("upload successfully");
+				   res.json({"sucess":true});
 				},
-				5000 
+				function( err )
+				{
+				   res.json({"sucess":true, "error":err.message+":"+err.stack});
+				   console.log(err.message+":"+err.stack);
+				}
 			);
 
 	    }, 
@@ -127,7 +121,10 @@ function DeleteOldHeaderLogos(successFunc, failFunc)
 					function()
 					{
 						console.log("success to delete previous logo:" + doc._id );	
-						if( i = coll.length - 1 ) successFunc();
+						if( i >= coll.length - 1 )
+						{	
+							successFunc();
+						}
 					}, 
 					function(err)
 					{

@@ -153,12 +153,13 @@ Example:
 */
 exports.SaveFileWithMetadata = function(mongoose, conn, fs, filePath, filenamePar, metadataObj, successFun, failFunc) {
      var read_stream =  fs.createReadStream(filePath);
-
-     var Grid = require('gridfs-stream');
+	 
+	 var Grid = require('gridfs-stream');
      Grid.mongo = mongoose.mongo;
 		
 	var date = new Date();
 	console.log("start:" + date + ";million:" + date.getMilliseconds());
+
 	var gfs = Grid(conn.db);
 	var writestream = gfs.createWriteStream({
 		filename: filenamePar,

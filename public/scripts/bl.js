@@ -11,10 +11,12 @@ function RenderHeaderLogo(imgID)
 			{
 				if( json.logoid == "000000000000000000000000" )
 				{
+					$("#" + imgID).attr("src", "");
 					$("#" + imgID).attr("src", "/public/images/nologo.png");
 				}
 				else
 				{
+					$("#" + imgID).attr("src", "");
 					$("#" + imgID).attr("src", "/imageapi/" + json.logoid );					
 				}
 			}
