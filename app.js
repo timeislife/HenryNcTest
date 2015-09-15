@@ -42,13 +42,14 @@ var authUtilities = require("./Models/authentication/utility")(authModels);
 //auth models and utility end --------------
 //app.set('AuthUtilities', authUtilities);
 app.AuthUtilities = authUtilities;
-app.MongoConnection = conn;
+app.Conn = conn;
 app.Mongoose = mongoose;
 app.MongoHelper = mongoHelper;
 app.AttchHelper = attchHelper;
 app.Fs = fs;
 app.BodyParser = bodyParser;
 app.CircularJSON = CircularJSON;
+
 var generalSettings = null;
 
 

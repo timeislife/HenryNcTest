@@ -195,12 +195,15 @@ exports.QueryARecord = function(mongoose, dbUri, dbName, collectionName, query, 
 }
 
 
-exports.QueryRecords = function(mongoose, dbUri, dbName, collectionName, query, projections,  successFunc, failFunc)
+exports.QueryRecords = function(mongoose, connection, collectionName, query, projections,  successFunc, failFunc)
 {
+	/*
 	var pos1 = dbUri.lastIndexOf("/");
 	var rootUri = dbUri.substr( 0, pos1 );
 	var newDbUri = rootUri + "/" + dbName;
 	var connection = mongoose.createConnection(newDbUri);
+	*/
+
 	connection.db.open( function(err){
 		if( err ) {  failFunc(err); return; }
 		var coll = connection.db.collection(collectionName);

@@ -157,25 +157,22 @@ exports.SaveFileWithMetadata = function(mongoose, conn, fs, filePath, filenamePa
      var Grid = require('gridfs-stream');
      Grid.mongo = mongoose.mongo;
 		
-	 conn.once('open', function () {
-		var date = new Date();
-		console.log("start:" + date + ";million:" + date.getMilliseconds());
-		var gfs = Grid(conn.db);
-		var writestream = gfs.createWriteStream({
-			filename: filenamePar,
-			metadata:metadataObj
-		});
+	var date = new Date();
+	console.log("start:" + date + ";million:" + date.getMilliseconds());
+	var gfs = Grid(conn.db);
+	var writestream = gfs.createWriteStream({
+		filename: filenamePar,
+		metadata:metadataObj
+	});
 
-		read_stream.pipe(writestream);
-		
-		read_stream.on('error', function (err) {
-		  failFunc(err);
-		});
-		var date1 = new Date();
-		console.log("end:" + date1 + ";million:" + date1.getMilliseconds());
-		successFun()
-		 
-	 });
+	read_stream.pipe(writestream);
+	
+	read_stream.on('error', function (err) {
+	  failFunc(err);
+	});
+	var date1 = new Date();
+	console.log("end:" + date1 + ";million:" + date1.getMilliseconds());
+	successFun()
 }
 
 /*

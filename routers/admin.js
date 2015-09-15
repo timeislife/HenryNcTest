@@ -66,7 +66,7 @@ router.post('/general', function(req, res) {
 });
 
 
-router.post('/uploadlogo',function(req,res){
+router.post('/uploadlogo',function(req,res,next){
      //var dirname = require('path').dirname(__dirname);
 	 console.log("/uploadlogo");
 
@@ -78,28 +78,33 @@ router.post('/uploadlogo',function(req,res){
 
 	 var filePath = path;
 	 var metadataObj = {imageusage:"logo", oname:originalname,mtype:mimetype};
-	 var conn = app.Mongoose.createConnection(app.set('server-name'), app.set('db-name'), 27017);
 
 	 DeleteOldHeaderLogos( 
 		function(){
-			console.log("here");
-			app.AttchHelper.SaveFileWithMetadata( app.Mongoose, conn, app.Fs, filePath, filename, metadataObj, 
+		    setTimeout( 
 				function()
 				{
-				   console.log("upload successfully");
-				   res.json({"sucess":true});
+					app.AttchHelper.SaveFileWithMetadata( app.Mongoose, app.Conn, app.Fs, filePath, filename, metadataObj, 
+						function()
+						{
+						   console.log("upload successfully");
+						   res.json({"sucess":true});
+						},
+						function( err )
+						{
+						   res.json({"sucess":true, "error":err.message+":"+err.stack});
+						   console.log(err.message+":"+err.stack);
+						}
+					);
 				},
-				function( err )
-				{
-				   res.json({"sucess":true, "error":err.message+":"+err.stack});
-				   console.log(err.message+":"+err.stack);
-				}
+				5000 
 			);
+
 	    }, 
 		function(err)
 		{
 			console.log(err);
-			res.json({"sucess":true, "error":err.message+":"+err.stack})
+			res.json({"sucess":true, "error":err.message+":"+err.stack});
 		}
 	 );
 
@@ -109,7 +114,7 @@ router.post('/uploadlogo',function(req,res){
 function DeleteOldHeaderLogos(successFunc, failFunc)
 {
 	//delete previous logo files.
-	app.MongoHelper.QueryRecords( app.Mongoose, app.set('db-uri'), app.set('db-name') , "fs.files",  
+	app.MongoHelper.QueryRecords( app.Mongoose, app.Conn , "fs.files",  
 		{"metadata.imageusage":"logo"}, //query
 		{}, 
 		function(coll)
@@ -118,7 +123,7 @@ function DeleteOldHeaderLogos(successFunc, failFunc)
 			if( coll.length == 0 ) successFunc();
 			for (i = 0; i < coll.length; i++) { 
 				var doc = coll[i];
-				app.AttchHelper.DeleteFile(  app.Mongoose, conn, {"_id": doc._id}, 
+				app.AttchHelper.DeleteFile(  app.Mongoose, app.Conn, {"_id": doc._id}, 
 					function()
 					{
 						console.log("success to delete previous logo:" + doc._id );	
