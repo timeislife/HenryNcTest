@@ -218,12 +218,12 @@ app.get('/header-logo-id', function(req, res) {
 	mongoHelper.QueryARecord( mongoose, app.set('db-uri'), app.set('db-name') , "fs.files", {"metadata.imageusage":"logo"}, {}, 
 		function(entity)
 		{
-			if( entity ) res.json({"sucess":true, "logoid":entity._id})
-			else res.json({"sucess":true, "logoid":"000000000000000000000000"})
+			if( entity ) res.json({"success":true, "logoid":entity._id})
+			else res.json({"success":true, "logoid":"000000000000000000000000"})
 		},
 		function(err)
 		{
-			res.json({"sucess":true, "error":err.message+":"+err.stack})
+			res.json({"success":true, "error":err.message+":"+err.stack})
 		}
 	);
 });

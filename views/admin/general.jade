@@ -10,6 +10,8 @@ block content
         input.form-control(type="text" id="inputSiteName" name="site_name" value=settings.site_name || '' style="width:200px;" placeholder="enter site name here")
       div.form-group
         label(for="inputSiteName") Site logo
+        div(style="width:200px;height:100px;display:block")
+            img#imglogo(style="width:100%" src="/header-logo-url")
         div#logoArea(style="clear:both")
             input.form-toolbar-button(type="file" name="logofile" style="float:left;margin-left:0px;")
             input.form-toolbar-button#btnUploadLogo(type='button', value='Upload' style="float:left;")      
@@ -84,8 +86,10 @@ block content
         {
             if( fileid && fileid != "000000000000000000000000" )
             {
-                $("#logoArea").html("<div style='width:200px;height:100px;float:left'><img style='width:100%' src='/imageapi/" + fileid + "'/></div>");
+                $("#imglogo").attr("src", "/imageapi/" + fileid );
             }
         }     
 
+
+        RenderHeaderLogo("imglogo");
         // upload asyn end ------
