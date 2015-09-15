@@ -69,8 +69,6 @@ router.post('/general', function(req, res) {
 router.post('/uploadlogo',function(req,res){
      //var dirname = require('path').dirname(__dirname);
 	 console.log("/uploadlogo");
-	 app.WriteLogToFile( app.FS, null, app.CircularJSON.stringify(req) );
-
 
      var filename = req.files.file.name;
      var path = req.files.file.path;
@@ -80,12 +78,12 @@ router.post('/uploadlogo',function(req,res){
 
 	 var filePath = path;
 	 var metadataObj = {imageusage:"logo", oname:originalname,mtype:mimetype};
-	 var conn = mongoose.createConnection(lawregulation2_server_name, lawregulation2_db_name, 27017);
+	 var conn = app.Mongoose.createConnection(app.set('server-name'), app.set('db-name'), 27017);
 
 	app.AttchHelper.SaveFileWithMetadata( app.Mongoose, conn, app.Fs, filePath, filename, metadataObj, 
 		function()
 		{
-		   logger.info("upload successfully");
+		   console.log("upload successfully");
 		   //res.redirect("/lawregulation2/" + req.params.id + "/edit?delayload=1");
 		   res.json({"sucess":true});
 		},

@@ -1,6 +1,7 @@
 //modules -------------------------------
 var express = require('express'),
     app = module.exports = express(),
+	multer = require('multer'),
 	jade = require('jade'),
 	mongoHelper = require('./utilities/MongooseHelper'),
 	attchHelper = require('./utilities/AttachmentHelper'),
@@ -45,7 +46,7 @@ app.MongoConnection = conn;
 app.Mongoose = mongoose;
 app.MongoHelper = mongoHelper;
 app.AttchHelper = attchHelper;
-app.FS = fs;
+app.Fs = fs;
 app.BodyParser = bodyParser;
 app.CircularJSON = CircularJSON;
 var generalSettings = null;
@@ -57,6 +58,7 @@ app.use(session({ secret: '123' }));
 app.use(flash());
 // parse urlencoded request bodies into req.body 
 app.use(bodyParser.urlencoded());
+app.use(multer({dest: __dirname + '/uploads/'}));
 // setup the logger
 app.use(morgan('combined', {stream: accessLogStream}));
 
@@ -193,7 +195,6 @@ app.get('/logout',authUtilities.loadUser,function(req, res) {
 	  }
 	res.redirect('/');
 });
-
 
 
 /*
