@@ -22,7 +22,17 @@ body{
 	
 }
 
+#globalContainer .header .headerLeft .headerLogoContainer
+{
+	width:200px;
+	height:100px;
+	display:block
+}
+
+
 #globalContainer .header .headerRight
 {
 
 }
+
+

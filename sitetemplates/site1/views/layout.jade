@@ -8,13 +8,18 @@ html
     link(rel="shortcut icon" href="/public/images/favicon.png")
     block title
     script(type='text/javascript', src='http://ajax.aspnetcdn.com/ajax/jquery/jquery-1.11.2.min.js')
+    script(type='text/javascript', src='/public/scripts/bl.js')      
     link(rel='stylesheet', href='/assets/styles/app.css')
 body
     div#globalContainer
       div.header
         div.headerLeft
+          div.headerLogoContainer
+            img#imglogo(style="height:100%")
         div.headerRight
       hr
       block content
+    script.
+      RenderHeaderLogo("imglogo");
 
 
