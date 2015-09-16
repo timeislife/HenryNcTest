@@ -47,10 +47,11 @@ router.get('/general', function(req,res,next){
 
 router.post('/general', function(req, res) {
   var siteName =  req.body.site_name;
-
+  var headerRightContent = req.body.header_right_content
+  console.log(headerRightContent);
 	app.MongoHelper.UpdateRecord( app.Mongoose, app.set('db-uri'), app.set('db-name') , "configurations", 
 		{ "key": "general" }, //query
-		{ "key": "general", "site_name": siteName },   //update
+		{ "key": "general", "site_name": siteName, "header_right_content": headerRightContent },   //update
 		{ upsert: true },  //options
 		function()
 		{
