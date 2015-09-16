@@ -50,7 +50,7 @@ app.Fs = fs;
 app.BodyParser = bodyParser;
 app.CircularJSON = CircularJSON;
 
-var generalSettings = null;
+var generalSettings = {};
 
 
 //middlewares ------------------------------
@@ -66,22 +66,20 @@ app.use(morgan('combined', {stream: accessLogStream}));
 app.use(function(req,res,next){
     res.locals.session = req.session;
 
-	if( !generalSettings )
-	{
-		//get general settings.
-		app.MongoHelper.QueryARecord( app.Mongoose, app.set('db-uri'), app.set('db-name') , "configurations", {"key":"general"}, {}, 
-				function(entity)
-				{
-					if( !entity ) entity = {};
-					//console.log('GET general setting ID: ' + entity._id);
-					 generalSettings = entity;
-				},
-				function(err)
-				{
-					logger.error(err.message+":"+err.stack);
-				}
-			);
-	}
+	//get general settings.
+	mongoHelper.QueryARecord( mongoose, app.set('db-uri'), app.set('db-name') , "configurations", {"key":"general"}, {}, 
+			function(entity)
+			{
+				if( !entity ) entity = {};
+				//console.log('GET general setting ID: ' + entity._id);
+				 generalSettings = entity;
+			},
+			function(err)
+			{
+				logger.error(err.message+":"+err.stack);
+			}
+		);
+
 	app.locals.GeneralSettings = generalSettings;
 
     next();
@@ -228,6 +226,7 @@ app.get('/header-logo-id', function(req, res) {
 		}
 	);
 });
+
 
 /*
 //Parameters:

@@ -17,6 +17,7 @@ body
           div.headerLogoContainer
             img#imglogo(style="height:100%")
         div.headerRight
+          != GeneralSettings.header_right_content
       hr
       block content
     script.
