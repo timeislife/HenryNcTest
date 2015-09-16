@@ -19,20 +19,29 @@ body{
 
 #globalContainer .header .headerLeft
 {
-	
+	width:40%;
+	display:inline;
+	float:left;
 }
 
 #globalContainer .header .headerLeft .headerLogoContainer
 {
 	width:200px;
 	height:100px;
-	display:block
+	display:block;
+	float:left;
 }
 
 
 #globalContainer .header .headerRight
 {
+	width:60%;
+	display:inline;
+}
 
+#globalContainer .header .headerRight > p
+{
+	float:right;
 }
 
 

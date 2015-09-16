@@ -18,7 +18,7 @@ body
             img#imglogo(style="height:100%")
         div.headerRight
           != GeneralSettings.header_right_content
-      hr
+      hr(style="width:100%;clear:both;")
       block content
     script.
       RenderHeaderLogo("imglogo");
