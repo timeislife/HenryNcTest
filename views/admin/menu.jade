@@ -2,4 +2,57 @@ extends ../layout-adm.jade
 block title 
     title Home
 block content
-   p menu settings here
+   link(rel='stylesheet', href='/public/scripts/jstree/themes/default/style.min.css') 
+   script(type='text/javascript', src='/public/scripts/jstree/jstree.min.js')   
+   h1 menu settings
+   div(id="jstree_demo_div") 
+
+   script.
+        $(function () { $('#jstree_demo_div').jstree(); });
+
+        var treeData = [
+                {
+                    "text" : "Root node",
+                    "state" : { "opened" : true },
+                    "children" : [
+                        {
+                            "id" : "childNode1",
+                            "text" : "Child node 1",
+                            "state" : { "selected" : true },
+                            "icon" : "jstree-file"
+                        },
+                        { "text" : "Child node 2", "state" : { "disabled" : true } }
+                    ]
+                }
+            ];
+
+        $('#jstree_demo_div').jstree({
+        'core' : {
+            data: {
+                'url' : '/admin/menujson',
+                'data' : function (node) {
+                    return { 'id' : node.id };
+                }
+            },
+            'check_callback' : true
+            },
+        "plugins" : [ 'state','dnd','contextmenu','wholerow' ]
+        })
+        .on('create_node.jstree', function (e, data) {
+            alert( data.node.parent +  ',position:' + data.position+  ', text:' + data.node.text );
+            /*
+            $.get('?operation=create_node', { 'id' : data.node.parent, 'position' : data.position, 'text' : data.node.text })
+                .done(function (d) {
+                    data.instance.set_id(data.node, d.id);
+                })
+                .fail(function () {
+                    data.instance.refresh();
+                });
+            */
+        });
+
+        /*
+        $('#jstree_demo_div').on("changed.jstree", function (e, data) {
+          alert(data.selected);
+        });
+        */

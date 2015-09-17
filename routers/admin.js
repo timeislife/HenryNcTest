@@ -53,12 +53,39 @@ router.get('/menu', function(req,res,next){
 	app.MongoHelper.QueryARecord( app.Mongoose, app.set('db-uri'), app.set('db-name') , "configurations", {"key":"menu"}, {}, 
 			function(entity)
 			{
-				if( !entity ) entity = {};
-				//console.log('GET general setting ID: ' + entity._id);
-				 res.render('admin/menu.jade', {
-					reqA:req,
-					menusettings:entity
+				if( !entity ) entity = [{text:"Site"}];
+				res.format({
+					html: function() {
+						//console.log('GET general setting ID: ' + entity._id);
+						 res.render('admin/menu.jade', {
+							reqA:req,
+							menusettings:entity
+						});
+					},
+					json: function()
+					{
+						res.json(entity);
+					}
 				});
+			},
+			function(err)
+			{
+				logger.error(err.message+":"+err.stack);
+			}
+		);
+
+});
+
+router.get('/menujson', function(req,res,next){
+		app.AuthUtilities.loadUser(req,res,next);
+	},
+	function(req, res,next) {
+	
+	app.MongoHelper.QueryARecord( app.Mongoose, app.set('db-uri'), app.set('db-name') , "configurations", {"key":"menu"}, {}, 
+			function(entity)
+			{
+				if( !entity ) entity = [{text:"Site"}];
+				res.json(entity);
 			},
 			function(err)
 			{
