@@ -95,6 +95,12 @@ router.get('/menujson', function(req,res,next){
 
 });
 
+//TODO: here
+router.post('/menu/createnode', function(req, res) {
+	 var newNodeInfo = JSON.parse(req.body.data);
+
+});
+
 
 router.post('/general', function(req, res) {
   var siteName =  req.body.site_name;
