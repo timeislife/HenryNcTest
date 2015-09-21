@@ -15,6 +15,7 @@ var express = require('express'),
 	CircularJSON = require('circular-json'),
 	bodyParser = require('body-parser'),
 	http = require('http').Server(app),
+	jsUtil = require('./utilities/JSUtilities'),
 	path = require('path'),
 	//About router
 	about = require('./routers/about'),
@@ -49,6 +50,7 @@ app.AttchHelper = attchHelper;
 app.Fs = fs;
 app.BodyParser = bodyParser;
 app.CircularJSON = CircularJSON;
+app.JsUtil = require('./utilities/JSUtilities');
 
 var generalSettings = {};
 

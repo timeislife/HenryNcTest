@@ -60,3 +60,46 @@ exports.SortObjByPropertyName = function(obj, asending, sortSub)
     }
     return sorted;
 }
+
+/*
+Adds a child node at the specified position to a JSON object.
+Parameters:
+	jsonObj: json object to which the child node will be added. 
+	nodeText: "text" property of the node to which the child node will be added. 
+	childObj: the object to be added to the jsonObj as a child. 
+	position: the position after which the child object will be added. 
+Example: 
+	var jsUtil = require('./utilities/JSUtilities');
+	var jsonObj = {"text":"Root"};
+	var nodeText = "Root";
+	var childObj = {"text","child 1"};
+	var result = jsUtil.AddChildToJsonNode( jsonObj, nodeText, childObj, 0 );
+
+
+	result: {"text":"Root", children: [{"text","child 1"}]}
+
+*/
+exports.AddChildToJsonNode( jsonObj, nodeText, childObj, position )
+{
+	if( jsonObj["text"] == nodeText )
+	{
+		if( !jsonObj["children"] )
+		{
+			jsonObj["children"] = [];
+		}	
+		position = jsonObj["children"].length < position? jsonObj["children"].length : position;
+		jsonObj["children"].splice(position, 0, childObj);
+		return jsonObj;
+	}
+	else
+	{
+		if( jsonObj["children"] )
+		{
+			for( i = 0 ; i < jsonObj["children"].length; i++ )
+			{
+				jsonObj["children"][i]  = AddChildToJsonNode( jsonObj["children"][i], nodeText, childObj, position );
+			}
+		}
+		return jsonObj;
+	}	
+}

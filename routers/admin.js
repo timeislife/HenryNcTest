@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var app = require("../app");
 
+var menuSettings_global = {};
 
 // middleware specific to this router
 router.use(function timeLog(req, res, next) {
@@ -53,7 +54,8 @@ router.get('/menu', function(req,res,next){
 	app.MongoHelper.QueryARecord( app.Mongoose, app.set('db-uri'), app.set('db-name') , "configurations", {"key":"menu"}, {}, 
 			function(entity)
 			{
-				if( !entity ) entity = [{text:"Site"}];
+				if( !entity ) entity = {text:"Site"};
+				menuSettings_global = entity;
 				res.format({
 					html: function() {
 						//console.log('GET general setting ID: ' + entity._id);
@@ -98,7 +100,8 @@ router.get('/menujson', function(req,res,next){
 //TODO: here
 router.post('/menu/createnode', function(req, res) {
 	 var newNodeInfo = JSON.parse(req.body.data);
-
+	 console.log( menuSettings_global );
+	 app.JsUtil.AddChildToJsonNode( menuSettings_global );
 });
 
 
